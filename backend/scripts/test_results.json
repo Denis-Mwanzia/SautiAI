@@ -1,0 +1,57 @@
+{
+  "timestamp": "2025-11-15T19:59:30.158189",
+  "summary": {
+    "total": 7,
+    "passed": 0,
+    "failed": 7,
+    "warnings": 0
+  },
+  "results": {
+    "passed": [],
+    "failed": [
+      {
+        "test": 1,
+        "description": "Health check endpoint",
+        "endpoint": "/health",
+        "error": ""
+      },
+      {
+        "test": 2,
+        "description": "Root endpoint",
+        "endpoint": "/",
+        "error": ""
+      },
+      {
+        "test": 3,
+        "description": "List all data sources",
+        "endpoint": "/ingest/sources",
+        "error": ""
+      },
+      {
+        "test": 4,
+        "description": "List enabled sources only",
+        "endpoint": "/ingest/sources?enabled_only=true",
+        "error": ""
+      },
+      {
+        "test": 5,
+        "description": "Filter by RSS feed type",
+        "endpoint": "/ingest/sources?source_type=rss_feed",
+        "error": ""
+      },
+      {
+        "test": 6,
+        "description": "Filter by governance category",
+        "endpoint": "/ingest/sources?category=governance",
+        "error": ""
+      },
+      {
+        "test": 7,
+        "description": "Get ingestion status",
+        "endpoint": "/ingest/status",
+        "error": ""
+      }
+    ],
+    "warnings": []
+  }
+}

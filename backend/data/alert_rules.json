@@ -1,0 +1,13 @@
+[
+  {
+    "id": "98733edd-f257-42f1-b7b0-707557ec3b8e",
+    "name": "New rule",
+    "enabled": false,
+    "sector": null,
+    "county": null,
+    "min_count": 10,
+    "notify_slack": false,
+    "notify_webhook": false,
+    "created_at": "2025-11-17T17:19:20.471517"
+  }
+]
