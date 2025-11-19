@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: sauti-ai-backend
+    restart: unless-stopped
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    environment:
+      - ENVIRONMENT=production
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - SECRET_KEY=${SECRET_KEY}
+      - DATABASE_URL=${DATABASE_URL}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+      - SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY}
+      - VERTEX_AI_PROJECT=${VERTEX_AI_PROJECT}
+      - VERTEX_AI_LOCATION=${VERTEX_AI_LOCATION:-us-central1}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
+      - TWITTER_BEARER_TOKEN=${TWITTER_BEARER_TOKEN}
+      - FACEBOOK_ACCESS_TOKEN=${FACEBOOK_ACCESS_TOKEN}
+      - FACEBOOK_APP_ID=${FACEBOOK_APP_ID}
+      - FACEBOOK_APP_SECRET=${FACEBOOK_APP_SECRET}
+      - JASECI_SERVER_URL=${JASECI_SERVER_URL:-http://localhost:8000}
+      - JASECI_MASTER_KEY=${JASECI_MASTER_KEY}
+      - SENTRY_DSN=${SENTRY_DSN}
+      - ENABLE_AI=${ENABLE_AI:-false}
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}
+      - ALERT_WEBHOOK_URL=${ALERT_WEBHOOK_URL}
+      - CORS_ORIGINS=${CORS_ORIGINS}
+      - PRODUCTION_ORIGINS=${PRODUCTION_ORIGINS}
+      - PUBLIC_BACKEND_ORIGIN=${PUBLIC_BACKEND_ORIGIN}
+    volumes:
+      - ./gcp-service-account.json:/app/gcp-service-account.json:ro
+    networks:
+      - sauti-ai-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+      args:
+        - VITE_API_URL=${VITE_API_URL:-http://localhost:8000}
+        - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+        - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+    container_name: sauti-ai-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - sauti-ai-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+networks:
+  sauti-ai-network:
+    driver: bridge
+
