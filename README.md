@@ -23,7 +23,6 @@ A real-time, agentic, generative-AI civic intelligence platform for Kenya that a
 - [API Documentation](#api-documentation)
 - [Contributing](#contributing)
 - [License](#license)
-- [Support](#support)
 
 ## 🎯 Overview
 
@@ -523,12 +522,6 @@ Contributions are welcome! Please follow these guidelines:
 - **Frontend**: Use ESLint, follow React best practices, maintain component structure
 - **UI/UX**: Maintain consistency with the design system
 - **Tests**: Aim for >80% code coverage
-
-## 📞 Support
-
-- **Issues**: [GitHub Issues](https://github.com/your-org/sauti-ai/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-org/sauti-ai/discussions)
-- **Email**: support@sautiai.com
 
 ## 🔗 Related Documentation
 
