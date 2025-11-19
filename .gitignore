@@ -54,3 +54,7 @@ jaseci_serv/
 *.egg
 *.whl
 gcp-service-account.json
+
+# Netlify
+.netlify/
+.netlify.toml.local
