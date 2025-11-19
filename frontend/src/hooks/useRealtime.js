@@ -30,14 +30,14 @@ export function useRealtime(onUpdate) {
           try {
             // Only close if not already closed or closing
             if (wsRef.current.readyState !== WebSocket.CLOSED && wsRef.current.readyState !== WebSocket.CLOSING) {
-              wsRef.current.onopen = null
-              wsRef.current.onclose = null
-              wsRef.current.onerror = null
-              wsRef.current.onmessage = null
-              if (wsRef.current.pingInterval) {
-                clearInterval(wsRef.current.pingInterval)
-              }
-              wsRef.current.close()
+            wsRef.current.onopen = null
+            wsRef.current.onclose = null
+            wsRef.current.onerror = null
+            wsRef.current.onmessage = null
+            if (wsRef.current.pingInterval) {
+              clearInterval(wsRef.current.pingInterval)
+            }
+            wsRef.current.close()
             }
           } catch {}
           wsRef.current = null
@@ -116,8 +116,8 @@ export function useRealtime(onUpdate) {
               connect()
             }
           }, delay)
-        }
       }
+    }
     }
 
     // Initial connection attempt
@@ -142,7 +142,7 @@ export function useRealtime(onUpdate) {
           wsRef.current.onmessage = null
           // Only close if not already closed or closing
           if (wsRef.current.readyState !== WebSocket.CLOSED && wsRef.current.readyState !== WebSocket.CLOSING) {
-            wsRef.current.close()
+          wsRef.current.close()
           }
         } catch {}
         wsRef.current = null
