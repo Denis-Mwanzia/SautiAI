@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import api from '../services/api'
 import { useToast } from '../contexts/ToastContext'
-import { Save, CheckCircle } from 'lucide-react'
+import { Save, CheckCircle, Bell, Settings as SettingsIcon } from 'lucide-react'
 
 export default function Settings() {
   const [apiKeys, setApiKeys] = useState({
@@ -14,7 +14,6 @@ export default function Settings() {
   const toast = useToast()
 
   const handleSave = () => {
-    // TODO: Implement API key saving
     setSaved(true)
     toast.success('Settings saved successfully')
     setTimeout(() => setSaved(false), 3000)
@@ -35,58 +34,61 @@ export default function Settings() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="animate-slide-up">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
-          Settings
-        </h1>
-        <p className="text-gray-600 mt-2">Manage API keys and agent schedules</p>
+      {/* Header */}
+      <div>
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">Settings</h1>
+        <p className="text-gray-600 text-sm">Manage API keys, alerts, and agent schedules</p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100 animate-slide-up">
+      {/* API Keys */}
+      <div className="glass-card p-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-primary-100 rounded-lg">
-            <Save className="h-6 w-6 text-primary-600" />
+          <div className="p-2.5 bg-gray-900 rounded-lg">
+            <Save className="h-5 w-5 text-white" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">API Keys</h2>
-        </div>
-        <div className="space-y-6">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <h2 className="text-lg font-semibold text-gray-900">API Keys</h2>
+            <p className="text-xs text-gray-600 mt-0.5">Configure external service integrations</p>
+          </div>
+        </div>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
               Twitter Bearer Token
             </label>
             <input
               type="password"
               value={apiKeys.twitter}
               onChange={(e) => setApiKeys({ ...apiKeys, twitter: e.target.value })}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 outline-none"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 transition-all duration-200 outline-none bg-white text-sm"
               placeholder="Enter Twitter Bearer Token"
             />
             <p className="text-xs text-gray-500 mt-1">Optional - for Twitter data ingestion</p>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
               Facebook Access Token
             </label>
             <input
               type="password"
               value={apiKeys.facebook}
               onChange={(e) => setApiKeys({ ...apiKeys, facebook: e.target.value })}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 outline-none"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 transition-all duration-200 outline-none bg-white text-sm"
               placeholder="Enter Facebook Access Token"
             />
             <p className="text-xs text-gray-500 mt-1">Optional - for Facebook public pages</p>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
               Vertex AI Project ID
             </label>
             <input
               type="text"
               value={apiKeys.vertexAI}
               onChange={(e) => setApiKeys({ ...apiKeys, vertexAI: e.target.value })}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 outline-none"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 transition-all duration-200 outline-none bg-white text-sm"
               placeholder="Enter Vertex AI Project ID"
             />
             <p className="text-xs text-gray-500 mt-1">Required for AI analysis features</p>
@@ -94,43 +96,51 @@ export default function Settings() {
 
           <button
             onClick={handleSave}
-            className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:from-primary-700 hover:to-primary-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-semibold"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-all duration-200 text-sm font-medium shadow-sm hover:shadow"
           >
-            <Save className="h-5 w-5" />
+            <Save className="h-4 w-4" />
             Save Changes
           </button>
 
           {saved && (
-            <div className="flex items-center gap-2 px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-xl animate-slide-up">
+            <div className="flex items-center gap-2 px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-lg">
               <CheckCircle className="h-5 w-5" />
-              <span className="font-medium">Settings saved successfully!</span>
+              <span className="text-sm font-medium">Settings saved successfully!</span>
             </div>
           )}
         </div>
       </div>
 
       {/* Alerts / Webhooks */}
-      <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100 animate-slide-up" style={{ animationDelay: '0.05s' }}>
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Alerts & Notifications</h2>
-        <div className="grid md:grid-cols-2 gap-6">
+      <div className="glass-card p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2.5 bg-gray-900 rounded-lg">
+            <Bell className="h-5 w-5 text-white" />
+          </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Slack Webhook URL</label>
+            <h2 className="text-lg font-semibold text-gray-900">Alerts & Notifications</h2>
+            <p className="text-xs text-gray-600 mt-0.5">Configure webhook endpoints for alerts</p>
+          </div>
+        </div>
+        <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Slack Webhook URL</label>
             <input
               type="text"
               value={alertsCfg.SLACK_WEBHOOK_URL}
               onChange={(e)=>setAlertsCfg({...alertsCfg, SLACK_WEBHOOK_URL: e.target.value})}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 transition-all duration-200 outline-none bg-white text-sm"
               placeholder="https://hooks.slack.com/services/..."
             />
             <p className="text-xs text-gray-500 mt-1">Optional. Send rule-triggered or red-flag alerts to Slack.</p>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Generic Webhook URL</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Generic Webhook URL</label>
             <input
               type="text"
               value={alertsCfg.ALERT_WEBHOOK_URL}
               onChange={(e)=>setAlertsCfg({...alertsCfg, ALERT_WEBHOOK_URL: e.target.value})}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 transition-all duration-200 outline-none bg-white text-sm"
               placeholder="https://example.com/webhook"
             />
             <p className="text-xs text-gray-500 mt-1">Optional. Receives full alert payloads (JSON).</p>
@@ -146,21 +156,26 @@ export default function Settings() {
                 toast.error('Failed to save alert configuration')
               }
             }}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-all duration-200 text-sm font-medium shadow-sm hover:shadow"
           >
-            <Save className="h-5 w-5"/> Save Alerts Config
+            <Save className="h-4 w-4"/> Save Alerts Config
           </button>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Agent Schedule</h2>
-        <p className="text-gray-600 mb-4">Configure agent execution schedules</p>
-        <div className="p-6 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-          <p className="text-sm text-gray-500 text-center">Agent schedule configuration coming soon</p>
+      {/* Agent Schedule */}
+      <div className="glass-card p-6">
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-1">Agent Schedule</h2>
+          <p className="text-sm text-gray-600">Configure agent execution schedules</p>
+        </div>
+        <div className="p-8 bg-gray-50 rounded-lg border border-gray-200 text-center">
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-gray-100 rounded-full mb-4">
+            <SettingsIcon className="h-6 w-6 text-gray-400" />
+          </div>
+          <p className="text-sm text-gray-500">Agent schedule configuration coming soon</p>
         </div>
       </div>
     </div>
   )
 }
-

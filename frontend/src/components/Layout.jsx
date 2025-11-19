@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import ConnectionStatus from './ConnectionStatus'
+import Footer from './Footer'
 import { 
   LayoutDashboard, 
   Bell, 
@@ -41,7 +42,7 @@ export default function Layout({ children }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gradient-to-br from-gray-50 via-white to-gray-50 flex flex-col min-h-screen overflow-x-hidden">
       {/* Skip to main content - Accessibility */}
       <a href="#main-content" className="skip-to-main">
         Skip to main content
@@ -50,10 +51,10 @@ export default function Layout({ children }) {
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 bg-white shadow-md z-30 flex items-center justify-between p-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg">
+          <div className="w-10 h-10 bg-kenya-gradient rounded-xl flex items-center justify-center shadow-lg ring-2 ring-white/20">
             <span className="text-white font-bold text-lg">SA</span>
           </div>
-          <span className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
+          <span className="text-xl font-bold bg-kenya-gradient bg-clip-text text-transparent">
             Sauti AI
           </span>
         </div>
@@ -70,23 +71,22 @@ export default function Layout({ children }) {
         </button>
       </div>
       
-      {/* Sidebar */}
-      <div className="hidden lg:flex fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200 shadow-lg flex-col">
+      {/* Sidebar - Fixed on left */}
+      <aside className="hidden lg:flex fixed top-0 bottom-0 left-0 w-64 bg-white border-r border-gray-200 flex-col z-20 overflow-hidden">
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center justify-between h-20 px-6 border-b border-gray-200 bg-gradient-to-r from-primary-50 to-white">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-md">
-                <span className="text-white font-bold text-lg">SA</span>
-              </div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
-                Sauti AI
-              </h1>
+          <div className="flex items-center gap-3 h-20 px-6 border-b border-gray-200">
+            <div className="w-10 h-10 bg-gray-900 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-lg">SA</span>
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-gray-900">Sauti AI</h1>
+              <p className="text-xs text-gray-600">Voice of the People</p>
             </div>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
             {navigation.map((item) => {
               const Icon = item.icon
               const isActive = location.pathname === item.href
@@ -95,35 +95,40 @@ export default function Layout({ children }) {
                   key={item.name}
                   to={item.href}
                   aria-current={isActive ? 'page' : undefined}
-                  className={`flex items-center px-4 py-3 text-sm font-semibold rounded-xl transition-all duration-200 group ${
+                  className={`group flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
                     isActive
-                      ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-200'
-                      : 'text-gray-700 hover:bg-gray-100 hover:text-primary-600'
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
-                  <Icon className={`mr-3 h-5 w-5 transition-transform group-hover:scale-110 ${isActive ? 'text-white' : ''}`} />
-                  {item.name}
+                  <Icon className={`h-5 w-5 flex-shrink-0 ${isActive ? 'text-white' : 'text-gray-600'}`} />
+                  <span>{item.name}</span>
                 </Link>
               )
             })}
           </nav>
 
           {/* Sign Out */}
-          <div className="p-4 border-t border-gray-200 bg-gray-50">
+          <div className="p-4 border-t border-gray-200">
             <button
               onClick={handleSignOut}
-              className="flex items-center w-full px-4 py-3 text-sm font-semibold text-gray-700 rounded-xl hover:bg-red-50 hover:text-red-600 transition-all duration-200 group"
+              className="flex items-center justify-center gap-2 w-full px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition-all duration-200"
             >
-              <LogOut className="mr-3 h-5 w-5 transition-transform group-hover:scale-110" />
-              Sign Out
+              <LogOut className="h-5 w-5" />
+              <span>Sign Out</span>
             </button>
           </div>
         </div>
-      </div>
+      </aside>
 
-      {/* Main Content */}
-      <div className="lg:pl-64 pt-16 lg:pt-0">
-        <main id="main-content" className="p-4 md:p-8 max-w-7xl mx-auto" role="main">{children}</main>
+      {/* Main Content Area with Footer - Positioned next to sidebar */}
+      <div className="lg:pl-64 pt-16 lg:pt-0 flex flex-col min-h-screen w-full">
+        <main id="main-content" className="flex-1 px-4 md:px-6 lg:px-8 max-w-7xl mx-auto w-full py-8" role="main">{children}</main>
+        
+        {/* Footer - Below both sidebar and content, spans from sidebar edge to viewport edge */}
+        <footer className="w-full relative z-30 mt-auto">
+          <Footer />
+        </footer>
       </div>
 
       {/* Connection Status Indicator */}
@@ -148,10 +153,10 @@ export default function Layout({ children }) {
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg">
+                <div className="w-10 h-10 bg-kenya-gradient rounded-xl flex items-center justify-center shadow-lg ring-2 ring-white/20">
                   <span className="text-white font-bold text-lg">SA</span>
                 </div>
-                <span className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
+                <span className="text-xl font-bold bg-kenya-gradient bg-clip-text text-transparent">
                   Sauti AI
                 </span>
               </div>
@@ -165,7 +170,7 @@ export default function Layout({ children }) {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
             {navigation.map((item) => {
               const Icon = item.icon
               const isActive = location.pathname === item.href
@@ -174,13 +179,13 @@ export default function Layout({ children }) {
                   key={item.name}
                   to={item.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center px-4 py-3 text-sm font-semibold rounded-xl transition-all duration-200 group ${
+                  className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
                     isActive
-                      ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-200'
-                      : 'text-gray-700 hover:bg-gray-100 hover:text-primary-600'
+                      ? 'bg-gray-900 text-white'
+                      : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
-                  <Icon className={`mr-3 h-5 w-5 transition-transform group-hover:scale-110 ${isActive ? 'text-white' : ''}`} />
+                  <Icon className={`h-5 w-5 flex-shrink-0 ${isActive ? 'text-white' : 'text-gray-600'}`} />
                   {item.name}
                 </Link>
               )
@@ -188,13 +193,13 @@ export default function Layout({ children }) {
           </nav>
 
           {/* Sign Out */}
-          <div className="p-4 border-t border-gray-200 bg-gray-50">
+          <div className="p-4 border-t border-gray-200">
             <button
               onClick={handleSignOut}
-              className="flex items-center w-full px-4 py-3 text-sm font-semibold text-gray-700 rounded-xl hover:bg-red-50 hover:text-red-600 transition-all duration-200 group"
+              className="flex items-center gap-2 w-full px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-100 transition-all duration-200"
             >
-              <LogOut className="mr-3 h-5 w-5 transition-transform group-hover:scale-110" />
-              Sign Out
+              <LogOut className="h-5 w-5" />
+              <span>Sign Out</span>
             </button>
           </div>
         </div>

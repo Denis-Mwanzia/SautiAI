@@ -60,25 +60,37 @@ class DashboardService:
         
         # Get total feedback count (sync query, can be parallelized)
         def get_total_feedback():
-            total_query = self.supabase.table("citizen_feedback").select(
-                "id", count="exact"
-            ).gte("created_at", start_date)
-            
-            if county:
-                total_query = total_query.eq("location", county)
-            
-            total_result = total_query.execute()
-            return total_result.count if hasattr(total_result, 'count') else 0
+            try:
+                total_query = self.supabase.table("citizen_feedback").select(
+                    "id", count="exact"
+                ).gte("created_at", start_date)
+                
+                if county:
+                    total_query = total_query.eq("location", county)
+                
+                total_result = total_query.execute()
+                return total_result.count if hasattr(total_result, 'count') else 0
+            except Exception as e:
+                logger.error(f"Error getting total feedback: {e}")
+                return 0
         
         def get_prev_total_feedback():
-            prev_total = self.supabase.table("citizen_feedback").select("id", count="exact").gte("created_at", prev_start).lt("created_at", prev_end).execute()
-            return prev_total.count if hasattr(prev_total, 'count') else 0
+            try:
+                prev_total = self.supabase.table("citizen_feedback").select("id", count="exact").gte("created_at", prev_start).lt("created_at", prev_end).execute()
+                return prev_total.count if hasattr(prev_total, 'count') else 0
+            except Exception as e:
+                logger.error(f"Error getting previous total feedback: {e}")
+                return 0
         
         def get_recent_alerts():
-            alerts_result = self.supabase.table("alerts").select("*").order(
-                "created_at", desc=True
-            ).limit(10).execute()
-            return alerts_result.data if alerts_result else []
+            try:
+                alerts_result = self.supabase.table("alerts").select("*").order(
+                    "created_at", desc=True
+                ).limit(10).execute()
+                return alerts_result.data if alerts_result else []
+            except Exception as e:
+                logger.error(f"Error getting recent alerts: {e}")
+                return []
         
         # Parallelize independent async queries
         sentiment_dist, sector_dist, top_issues, trending, prev_sent = await asyncio.gather(
@@ -162,17 +174,21 @@ class DashboardService:
         start_date = (now - timedelta(days=days)).isoformat()
         
         # Get sentiment scores grouped by date
-        result = self.supabase.table("sentiment_scores").select(
-            "sentiment, analyzed_at"
-        ).gte("analyzed_at", start_date).order("analyzed_at").execute()
-        
-        # Group by date
-        trends = {}
-        for item in result.data:
-            date = item["analyzed_at"][:10]  # Extract date
-            if date not in trends:
-                trends[date] = {"positive": 0, "negative": 0, "neutral": 0}
-            trends[date][item["sentiment"]] = trends[date].get(item["sentiment"], 0) + 1
+        try:
+            result = self.supabase.table("sentiment_scores").select(
+                "sentiment, analyzed_at"
+            ).gte("analyzed_at", start_date).order("analyzed_at").execute()
+            
+            # Group by date
+            trends = {}
+            for item in result.data:
+                date = item["analyzed_at"][:10]  # Extract date
+                if date not in trends:
+                    trends[date] = {"positive": 0, "negative": 0, "neutral": 0}
+                trends[date][item["sentiment"]] = trends[date].get(item["sentiment"], 0) + 1
+        except Exception as e:
+            logger.error(f"Error getting sentiment trends: {e}")
+            trends = {}
         
         data = {
             "trends": trends,
@@ -188,30 +204,34 @@ class DashboardService:
         days: int = 7
     ) -> List[Dict[str, Any]]:
         """Get top issues by volume and urgency"""
-        start_date = (datetime.utcnow() - timedelta(days=days)).isoformat()
-        
-        # Get sector classification with counts
-        result = self.supabase.table("sector_classification").select(
-            "primary_sector, feedback_id"
-        ).gte("classified_at", start_date).execute()
-        
-        # Count by sector
-        sector_counts = {}
-        for item in result.data:
-            sector = item["primary_sector"]
-            sector_counts[sector] = sector_counts.get(sector, 0) + 1
-        
-        # Sort and format
-        top_issues = [
-            {"sector": sector, "count": count}
-            for sector, count in sorted(
-                sector_counts.items(),
-                key=lambda x: x[1],
-                reverse=True
-            )[:limit]
-        ]
-        
-        return top_issues
+        try:
+            start_date = (datetime.utcnow() - timedelta(days=days)).isoformat()
+            
+            # Get sector classification with counts
+            result = self.supabase.table("sector_classification").select(
+                "primary_sector, feedback_id"
+            ).gte("classified_at", start_date).execute()
+            
+            # Count by sector
+            sector_counts = {}
+            for item in result.data:
+                sector = item["primary_sector"]
+                sector_counts[sector] = sector_counts.get(sector, 0) + 1
+            
+            # Sort and format
+            top_issues = [
+                {"sector": sector, "count": count}
+                for sector, count in sorted(
+                    sector_counts.items(),
+                    key=lambda x: x[1],
+                    reverse=True
+                )[:limit]
+            ]
+            
+            return top_issues
+        except Exception as e:
+            logger.error(f"Error getting top issues: {e}")
+            return []
     
     async def get_county_heatmap(self, days: int = 7) -> Dict[str, Dict[str, Any]]:
         """Get county-level sentiment and issue heatmap"""
@@ -239,19 +259,23 @@ class DashboardService:
         sector: Optional[str]
     ) -> Dict[str, int]:
         """Get sentiment distribution"""
-        query = self.supabase.table("sentiment_scores").select(
-            "sentiment"
-        ).gte("analyzed_at", start_date)
-        
-        result = query.execute()
-        
-        dist = {"positive": 0, "negative": 0, "neutral": 0}
-        for item in result.data:
-            sentiment = item["sentiment"]
-            if sentiment in dist:
-                dist[sentiment] += 1
-        
-        return dist
+        try:
+            query = self.supabase.table("sentiment_scores").select(
+                "sentiment"
+            ).gte("analyzed_at", start_date)
+            
+            result = query.execute()
+            
+            dist = {"positive": 0, "negative": 0, "neutral": 0}
+            for item in result.data:
+                sentiment = item["sentiment"]
+                if sentiment in dist:
+                    dist[sentiment] += 1
+            
+            return dist
+        except Exception as e:
+            logger.error(f"Error getting sentiment distribution: {e}")
+            return {"positive": 0, "negative": 0, "neutral": 0}
     
     async def _get_sector_distribution(
         self,
@@ -259,18 +283,22 @@ class DashboardService:
         county: Optional[str]
     ) -> Dict[str, int]:
         """Get sector distribution"""
-        query = self.supabase.table("sector_classification").select(
-            "primary_sector"
-        ).gte("classified_at", start_date)
-        
-        result = query.execute()
-        
-        dist = {}
-        for item in result.data:
-            sector = item["primary_sector"]
-            dist[sector] = dist.get(sector, 0) + 1
-        
-        return dist
+        try:
+            query = self.supabase.table("sector_classification").select(
+                "primary_sector"
+            ).gte("classified_at", start_date)
+            
+            result = query.execute()
+            
+            dist = {}
+            for item in result.data:
+                sector = item["primary_sector"]
+                dist[sector] = dist.get(sector, 0) + 1
+            
+            return dist
+        except Exception as e:
+            logger.error(f"Error getting sector distribution: {e}")
+            return {}
     
     async def _get_top_issues(
         self,
@@ -283,13 +311,17 @@ class DashboardService:
     
     async def _get_trending_complaints(self, days: int) -> List[Dict[str, Any]]:
         """Get trending complaints"""
-        start_date = (datetime.utcnow() - timedelta(days=days)).isoformat()
-        
-        result = self.supabase.table("citizen_feedback").select(
-            "id, text, created_at, source"
-        ).gte("created_at", start_date).order(
-            "created_at", desc=True
-        ).limit(20).execute()
-        
-        return result.data
+        try:
+            start_date = (datetime.utcnow() - timedelta(days=days)).isoformat()
+            
+            result = self.supabase.table("citizen_feedback").select(
+                "id, text, created_at, source"
+            ).gte("created_at", start_date).order(
+                "created_at", desc=True
+            ).limit(20).execute()
+            
+            return result.data if result else []
+        except Exception as e:
+            logger.error(f"Error getting trending complaints: {e}")
+            return []
 

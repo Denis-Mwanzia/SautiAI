@@ -28,15 +28,24 @@ export function useRealtime(onUpdate) {
         // Clean up any existing connection
         if (wsRef.current) {
           try {
-            wsRef.current.onopen = null
-            wsRef.current.onclose = null
-            wsRef.current.onerror = null
-            wsRef.current.onmessage = null
-            if (wsRef.current.pingInterval) {
-              clearInterval(wsRef.current.pingInterval)
+            // Only close if not already closed or closing
+            if (wsRef.current.readyState !== WebSocket.CLOSED && wsRef.current.readyState !== WebSocket.CLOSING) {
+              wsRef.current.onopen = null
+              wsRef.current.onclose = null
+              wsRef.current.onerror = null
+              wsRef.current.onmessage = null
+              if (wsRef.current.pingInterval) {
+                clearInterval(wsRef.current.pingInterval)
+              }
+              wsRef.current.close()
             }
-            wsRef.current.close()
           } catch {}
+          wsRef.current = null
+        }
+
+        // Don't create new connection if intentionally closed
+        if (isIntentionallyClosedRef.current) {
+          return
         }
 
         wsRef.current = new WebSocket(wsUrl)
@@ -73,25 +82,40 @@ export function useRealtime(onUpdate) {
             wsRef.current.pingInterval = null
           }
           
+          // Don't reconnect if intentionally closed or in cleanup
+          if (isIntentionallyClosedRef.current) {
+            return
+          }
+          
           // Only reconnect if not intentionally closed and haven't exceeded max attempts
-          if (!isIntentionallyClosedRef.current && reconnectAttemptsRef.current < maxReconnectAttempts) {
+          if (reconnectAttemptsRef.current < maxReconnectAttempts) {
             reconnectAttemptsRef.current++
             // Exponential backoff: 5s, 10s, 20s
             const delay = Math.min(5000 * Math.pow(2, reconnectAttemptsRef.current - 1), 20000)
-            reconnectTimeoutRef.current = setTimeout(connect, delay)
+            reconnectTimeoutRef.current = setTimeout(() => {
+              // Double-check we're not intentionally closed before reconnecting
+              if (!isIntentionallyClosedRef.current) {
+                connect()
+              }
+            }, delay)
           }
         }
 
         wsRef.current.onerror = (error) => {
           // Silently handle errors - they'll be handled by onclose
-          // Don't log to avoid console spam
+          // Don't log to avoid console spam, especially in React StrictMode
+          // where double mounting causes expected connection closures
         }
       } catch (err) {
-        // Only retry if we haven't exceeded max attempts
-        if (reconnectAttemptsRef.current < maxReconnectAttempts) {
+        // Only retry if we haven't exceeded max attempts and not intentionally closed
+        if (!isIntentionallyClosedRef.current && reconnectAttemptsRef.current < maxReconnectAttempts) {
           reconnectAttemptsRef.current++
           const delay = Math.min(5000 * Math.pow(2, reconnectAttemptsRef.current - 1), 20000)
-          reconnectTimeoutRef.current = setTimeout(connect, delay)
+          reconnectTimeoutRef.current = setTimeout(() => {
+            if (!isIntentionallyClosedRef.current) {
+              connect()
+            }
+          }, delay)
         }
       }
     }
@@ -103,18 +127,25 @@ export function useRealtime(onUpdate) {
       isIntentionallyClosedRef.current = true
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current)
+        reconnectTimeoutRef.current = null
       }
       if (wsRef.current) {
         if (wsRef.current.pingInterval) {
           clearInterval(wsRef.current.pingInterval)
+          wsRef.current.pingInterval = null
         }
         try {
+          // Remove event handlers first to prevent reconnection attempts
           wsRef.current.onopen = null
           wsRef.current.onclose = null
           wsRef.current.onerror = null
           wsRef.current.onmessage = null
-          wsRef.current.close()
+          // Only close if not already closed or closing
+          if (wsRef.current.readyState !== WebSocket.CLOSED && wsRef.current.readyState !== WebSocket.CLOSING) {
+            wsRef.current.close()
+          }
         } catch {}
+        wsRef.current = null
       }
     }
   }, [onUpdate])

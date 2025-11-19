@@ -125,7 +125,7 @@ export default function OnboardingTour({ onComplete }) {
       
       {/* Highlight */}
       <div
-        className="fixed z-[9999] border-4 border-primary-500 rounded-lg pointer-events-none animate-pulse"
+        className="fixed z-[9999] border-4 border-kenya-red-500 rounded-lg pointer-events-none animate-pulse"
         style={{
           top: rect.top - 4,
           left: rect.left - 4,
@@ -174,9 +174,9 @@ export default function OnboardingTour({ onComplete }) {
                 key={idx}
                 className={`h-2 rounded-full transition-all ${
                   idx === currentStep
-                    ? 'bg-primary-500 w-8'
+                    ? 'bg-kenya-red-500 w-8'
                     : idx < currentStep
-                    ? 'bg-green-500 w-2'
+                    ? 'bg-kenya-green-500 w-2'
                     : 'bg-gray-300 w-2'
                 }`}
                 aria-hidden="true"
@@ -188,7 +188,7 @@ export default function OnboardingTour({ onComplete }) {
             {currentStep > 0 && (
               <button
                 onClick={handlePrevious}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-kenya-red-500"
               >
                 <ArrowLeft className="h-4 w-4 inline mr-1" />
                 Previous
@@ -196,7 +196,7 @@ export default function OnboardingTour({ onComplete }) {
             )}
             <button
               onClick={handleNext}
-              className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 flex items-center gap-1"
+              className="px-4 py-2 text-sm font-medium text-white bg-kenya-gradient rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-kenya-red-500 flex items-center gap-1"
             >
               {currentStep === TOUR_STEPS.length - 1 ? (
                 <>

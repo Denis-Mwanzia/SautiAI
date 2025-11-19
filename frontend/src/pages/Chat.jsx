@@ -33,7 +33,6 @@ export default function Chat() {
     setInput('')
     setLoading(true)
 
-    // Add user message
     const newUserMessage = {
       role: 'user',
       content: userMessage,
@@ -42,7 +41,6 @@ export default function Chat() {
     setMessages(prev => [...prev, newUserMessage])
 
     try {
-      // Build conversation history
       const conversationHistory = messages
         .filter(msg => msg.role !== 'system')
         .map(msg => ({
@@ -51,13 +49,11 @@ export default function Chat() {
         }))
         .filter(msg => msg.user || msg.assistant)
 
-      // Call chat API
       const response = await api.post('/chat/message', {
         message: userMessage,
         conversation_history: conversationHistory
       })
 
-      // Add assistant response
       const assistantMessage = {
         role: 'assistant',
         content: response?.data?.data?.response || "I'm sorry, I couldn't process your request.",
@@ -70,7 +66,6 @@ export default function Chat() {
       setMessages(prev => [...prev, assistantMessage])
     } catch (error) {
       console.error('Chat error:', error)
-      // Handle 404 gracefully (AI features disabled)
       let errorMsg = "I'm sorry, I encountered an error processing your request. Please try again."
       if (error.response?.status === 404) {
         errorMsg = "Chat features are currently disabled. Please enable AI features in the backend configuration."
@@ -92,37 +87,35 @@ export default function Chat() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-8rem)] animate-fade-in">
-      <div className="animate-slide-up mb-6">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
-          Chat with Sauti AI
-        </h1>
-        <p className="text-gray-600 mt-2">Ask questions about citizen feedback data and insights</p>
+    <div className="flex flex-col h-[calc(100vh-12rem)] animate-fade-in">
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">Chat</h1>
+        <p className="text-gray-600 text-sm">Ask questions about citizen feedback data and insights</p>
       </div>
 
       {/* Chat Messages */}
-      <div className="flex-1 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden flex flex-col">
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+      <div className="flex-1 glass-card p-6 flex flex-col overflow-hidden">
+        <div className="flex-1 overflow-y-auto space-y-4 mb-4">
           {messages.map((message, index) => (
             <div
               key={index}
-              className={`flex items-start gap-4 animate-slide-up ${
+              className={`flex items-start gap-3 ${
                 message.role === 'user' ? 'justify-end' : 'justify-start'
               }`}
-              style={{ animationDelay: `${index * 0.05}s` }}
             >
               {message.role === 'assistant' && (
-                <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-full flex items-center justify-center shadow-md">
-                  <Bot className="h-6 w-6 text-white" />
+                <div className="flex-shrink-0 w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center">
+                  <Bot className="h-4 w-4 text-white" />
                 </div>
               )}
               
               <div
-                className={`max-w-[75%] rounded-2xl p-4 ${
+                className={`max-w-[75%] rounded-lg p-4 ${
                   message.role === 'user'
-                    ? 'bg-gradient-to-r from-primary-600 to-primary-700 text-white'
-                    : 'bg-gray-100 text-gray-900'
-                } ${message.error ? 'border-2 border-red-300' : ''}`}
+                    ? 'bg-gray-900 text-white'
+                    : 'bg-gray-50 text-gray-900 border border-gray-200'
+                } ${message.error ? 'border-2 border-red-300 bg-red-50' : ''}`}
               >
                 <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
                 {message.followUps && message.followUps.length > 0 && (
@@ -136,7 +129,7 @@ export default function Chat() {
                             setInput(followUp)
                             inputRef.current?.focus()
                           }}
-                          className="text-xs px-3 py-1.5 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-primary-400 transition-all text-gray-700 hover:text-primary-600"
+                          className="text-xs px-3 py-1.5 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all text-gray-700"
                         >
                           {followUp}
                         </button>
@@ -156,21 +149,21 @@ export default function Chat() {
               </div>
 
               {message.role === 'user' && (
-                <div className="flex-shrink-0 w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                  <User className="h-6 w-6 text-gray-600" />
+                <div className="flex-shrink-0 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                  <User className="h-4 w-4 text-gray-600" />
                 </div>
               )}
             </div>
           ))}
           
           {loading && (
-            <div className="flex items-start gap-4 animate-slide-up">
-              <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-full flex items-center justify-center shadow-md">
-                <Bot className="h-6 w-6 text-white" />
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center">
+                <Bot className="h-4 w-4 text-white" />
               </div>
-              <div className="bg-gray-100 rounded-2xl p-4">
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                 <div className="flex items-center gap-2">
-                  <Loader2 className="h-4 w-4 animate-spin text-primary-600" />
+                  <Loader2 className="h-4 w-4 animate-spin text-gray-600" />
                   <span className="text-sm text-gray-600">Thinking...</span>
                 </div>
               </div>
@@ -181,27 +174,27 @@ export default function Chat() {
         </div>
 
         {/* Input Form */}
-        <form onSubmit={handleSend} className="border-t border-gray-200 p-4 bg-gray-50">
-          <div className="flex items-center gap-3">
+        <form onSubmit={handleSend} className="border-t border-gray-200 pt-4">
+          <div className="flex items-center gap-2">
             <input
               ref={inputRef}
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about sentiment, sectors, trends, or any feedback data..."
-              className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 outline-none"
+              className="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 transition-all duration-200 outline-none bg-white text-sm"
               disabled={loading}
             />
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl hover:from-primary-700 hover:to-primary-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-semibold flex items-center gap-2"
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm font-medium shadow-sm hover:shadow"
             >
-              <Send className="h-5 w-5" />
+              <Send className="h-4 w-4" />
               Send
             </button>
           </div>
-          <p className="text-xs text-gray-500 mt-2 ml-1">
+          <p className="text-xs text-gray-500 mt-2">
             Try: "What's the sentiment distribution?", "Show me top issues", "How many feedback items do we have?"
           </p>
         </form>
@@ -209,4 +202,3 @@ export default function Chat() {
     </div>
   )
 }
-

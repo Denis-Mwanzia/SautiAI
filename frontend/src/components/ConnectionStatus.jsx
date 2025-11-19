@@ -21,8 +21,6 @@ export default function ConnectionStatus() {
     window.addEventListener('online', handleOnline)
     window.addEventListener('offline', handleOffline)
 
-    // Check WebSocket connection (if implemented)
-    // For now, simulate based on API health
     const checkConnection = async () => {
       try {
         const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/health`)
@@ -32,7 +30,7 @@ export default function ConnectionStatus() {
       }
     }
 
-    const interval = setInterval(checkConnection, 30000) // Check every 30s
+    const interval = setInterval(checkConnection, 30000)
     checkConnection()
 
     return () => {
@@ -42,26 +40,25 @@ export default function ConnectionStatus() {
     }
   }, [toast])
 
-  if (isOnline && wsConnected) return null // Don't show if everything is fine
+  if (isOnline && wsConnected) return null
 
   return (
     <div
-      className="fixed bottom-4 right-4 z-50 bg-white rounded-lg shadow-lg border-2 p-3 flex items-center gap-2 animate-slide-up"
+      className="fixed bottom-4 right-4 z-50 bg-white rounded-lg shadow-lg border border-gray-200 p-3 flex items-center gap-2"
       role="status"
       aria-live="polite"
     >
       {!isOnline ? (
         <>
-          <WifiOff className="h-5 w-5 text-red-500" />
+          <WifiOff className="h-4 w-4 text-red-500" />
           <span className="text-sm font-medium text-gray-700">Offline</span>
         </>
       ) : !wsConnected ? (
         <>
-          <Activity className="h-5 w-5 text-yellow-500 animate-pulse" />
+          <Activity className="h-4 w-4 text-yellow-500 animate-pulse" />
           <span className="text-sm font-medium text-gray-700">Connecting...</span>
         </>
       ) : null}
     </div>
   )
 }
-

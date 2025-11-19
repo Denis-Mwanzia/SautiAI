@@ -19,14 +19,12 @@ export default function Login() {
   const navigate = useNavigate()
   const [googleLoading, setGoogleLoading] = useState(false)
 
-  // Redirect if already logged in
   useEffect(() => {
     if (!authLoading && user) {
       navigate('/', { replace: true })
     }
   }, [user, authLoading, navigate])
 
-  // Password strength checker
   const getPasswordStrength = (pwd) => {
     if (!pwd) return { strength: 0, label: '', color: '' }
     let strength = 0
@@ -49,7 +47,6 @@ export default function Login() {
 
   const passwordStrength = isSignUp ? getPasswordStrength(password) : null
 
-  // Email validation
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!email) {
@@ -75,13 +72,11 @@ export default function Login() {
     setError('')
     setEmailError('')
 
-    // Validate email
     if (!validateEmail(email)) {
       setError('Please enter a valid email address')
       return
     }
 
-    // Validate password strength for sign up
     if (isSignUp && passwordStrength.strength < 2) {
       setError('Password is too weak. Please use at least 8 characters with a mix of letters and numbers.')
       return
@@ -98,7 +93,6 @@ export default function Login() {
       }
       navigate('/')
     } catch (err) {
-      // Better error messages
       const errorMsg = err.message || 'Authentication failed'
       if (errorMsg.includes('Invalid login credentials')) {
         setError('Invalid email or password. Please check your credentials and try again.')
@@ -126,7 +120,6 @@ export default function Login() {
     setGoogleLoading(true)
     try {
       await signInWithGoogle?.()
-      // Navigation handled by auth state
     } catch (err) {
       const errorMsg = err?.message || 'Google sign-in failed'
       setError(errorMsg)
@@ -137,28 +130,29 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-primary-100 p-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 animate-scale-in border border-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-50 p-4">
+      <div className="max-w-md w-full glass-card p-8 relative">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl mb-4 shadow-lg">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-900 rounded-xl mb-4">
             <span className="text-2xl font-bold text-white">SA</span>
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Sauti AI
           </h1>
-          <p className="text-gray-600 font-medium">Voice of the People</p>
+          <p className="text-gray-600 text-sm mb-1">Voice of the People</p>
+          <p className="text-gray-500 text-xs">Civic Intelligence Platform</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {error && (
-            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg animate-slide-up flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 flex-shrink-0" />
+            <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4 flex-shrink-0" />
               <span className="text-sm font-medium">{error}</span>
             </div>
           )}
 
-          <div className="space-y-2">
-            <label htmlFor="email" className="block text-sm font-semibold text-gray-700">
+          <div className="space-y-1.5">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email Address
             </label>
             <div className="relative">
@@ -171,26 +165,26 @@ export default function Login() {
                 required
                 aria-invalid={emailError ? 'true' : 'false'}
                 aria-describedby={emailError ? 'email-error' : undefined}
-                className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 outline-none ${
-                  emailError ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : 'border-gray-200'
+                className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 transition-all duration-200 outline-none bg-white text-sm ${
+                  emailError ? 'border-red-300 focus:border-red-500' : 'border-gray-200'
                 }`}
                 placeholder="your@email.com"
                 autoComplete="email"
               />
               {email && !emailError && (
-                <CheckCircle2 className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-green-500" />
+                <CheckCircle2 className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-green-500" />
               )}
             </div>
             {emailError && (
-              <p id="email-error" className="text-sm text-red-600 flex items-center gap-1" role="alert">
-                <XCircle className="h-4 w-4" />
+              <p id="email-error" className="text-xs text-red-600 flex items-center gap-1" role="alert">
+                <XCircle className="h-3 w-3" />
                 {emailError}
               </p>
             )}
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="password" className="block text-sm font-semibold text-gray-700">
+          <div className="space-y-1.5">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Password
               {isSignUp && (
                 <span className="text-xs font-normal text-gray-500 ml-2">
@@ -205,7 +199,7 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-3 pr-12 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 outline-none"
+                className="w-full px-4 py-2.5 pr-12 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 transition-all duration-200 outline-none bg-white text-sm"
                 placeholder="••••••••"
                 autoComplete={isSignUp ? 'new-password' : 'current-password'}
                 aria-describedby={isSignUp ? 'password-strength' : undefined}
@@ -216,13 +210,13 @@ export default function Login() {
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
-                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
             {isSignUp && password && (
               <div id="password-strength" className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
                     <div
                       className={`h-full transition-all duration-300 ${passwordStrength.color}`}
                       style={{ width: `${(passwordStrength.strength / 5) * 100}%` }}
@@ -257,11 +251,11 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-primary-600 to-primary-700 text-white py-3 px-4 rounded-xl hover:from-primary-700 hover:to-primary-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-semibold"
+            className="w-full py-2.5 px-4 bg-gray-900 text-white rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm font-medium shadow-sm hover:shadow"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 Processing...
               </span>
             ) : (
@@ -272,42 +266,37 @@ export default function Login() {
 
         {ENABLE_GOOGLE && (
           <>
-            {/* Divider */}
             <div className="relative my-6">
-              <div className="absolute inset-0 pass flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                <span className="px-2 bg-white text-gray-500 text-xs">Or continue with</span>
               </div>
             </div>
 
-            {/* Google Sign In Button */}
             <button
               onClick={handleGoogleSignIn}
               disabled={googleLoading || loading}
-              className="w-full flex items-center justify-center gap-3 px-4 py-3 border-2 border-gray-300 rounded-xl hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 bg-white text-gray-700 font-semibold shadow-sm hover:shadow-md"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-200 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-900/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 bg-white text-gray-700 text-sm font-medium shadow-sm hover:shadow"
               aria-label="Sign in with Google"
             >
               {googleLoading ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
                   <span>Connecting...</span>
                 </>
               ) : (
-                <>
-                  {/* Google icon intentionally omitted when disabled */}
-                  <span>Continue with Google</span>
-                </>
+                <span>Continue with Google</span>
               )}
             </button>
           </>
         )}
 
-        <div className="mt-6 text-center">
+        <div className="mt-6 text-center pt-6 border-t border-gray-200">
           <button
             onClick={() => setIsSignUp(!isSignUp)}
-            className="text-sm text-primary-600 hover:text-primary-700 font-medium transition-colors"
+            className="text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors"
           >
             {isSignUp
               ? 'Already have an account? Sign in'
@@ -318,4 +307,3 @@ export default function Login() {
     </div>
   )
 }
-
