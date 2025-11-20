@@ -2,8 +2,8 @@
 
 Complete API reference for the Sauti AI - Voice of the People platform.
 
-**Base URL**: `http://localhost:8000/api/v1` (development)  
-**Production URL**: `https://api.sautiai.com/api/v1`  
+**Base URL (Development)**: `http://localhost:8000/api/v1`  
+**Base URL (Production)**: `https://sauti-ai-backend-7ufmxmr57q-uc.a.run.app/api/v1`  
 **API Version**: 1.0.0  
 **Total Endpoints**: 50+
 
@@ -33,10 +33,17 @@ Complete API reference for the Sauti AI - Voice of the People platform.
 
 ## 🔗 Quick Links
 
+**Development:**
 - **Interactive Swagger UI**: http://localhost:8000/docs
 - **ReDoc Documentation**: http://localhost:8000/redoc
 - **OpenAPI JSON**: http://localhost:8000/openapi.json
 - **Health Check**: http://localhost:8000/health
+
+**Production:**
+- **Interactive Swagger UI**: https://sauti-ai-backend-7ufmxmr57q-uc.a.run.app/docs
+- **ReDoc Documentation**: https://sauti-ai-backend-7ufmxmr57q-uc.a.run.app/redoc
+- **OpenAPI JSON**: https://sauti-ai-backend-7ufmxmr57q-uc.a.run.app/openapi.json
+- **Health Check**: https://sauti-ai-backend-7ufmxmr57q-uc.a.run.app/health
 
 ## 🔐 Authentication
 
@@ -429,7 +436,10 @@ Send a message to the AI chat assistant for civic intelligence queries.
 }
 ```
 
-**Note**: Returns 404 if AI features are disabled.
+**Note**: 
+- Returns 404 if AI features are disabled (`ENABLE_AI=false`)
+- Requires `ENABLE_AI=true` in backend environment variables
+- Uses Vertex AI (Gemini) for response generation
 
 ---
 
@@ -918,7 +928,11 @@ WebSocket endpoint for real-time updates.
 
 **Connection:**
 ```javascript
+// Development
 const ws = new WebSocket('ws://localhost:8000/api/v1/realtime/stream');
+
+// Production (HTTPS requires WSS)
+const ws = new WebSocket('wss://sauti-ai-backend-7ufmxmr57q-uc.a.run.app/api/v1/realtime/stream');
 ```
 
 **Message Format:**
@@ -1093,6 +1107,7 @@ A Postman collection is available for testing all endpoints:
 
 ---
 
-**Last Updated**: 2025-01-15  
+**Last Updated**: 2025-11-20  
 **API Version**: 1.0.0  
+**Production URL**: https://sauti-ai-backend-7ufmxmr57q-uc.a.run.app/api/v1  
 **Maintained by**: Sauti AI Team
