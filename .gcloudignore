@@ -1,0 +1,91 @@
+# This file specifies files that are *not* uploaded to Google Cloud
+# using gcloud. It follows the same syntax as .gitignore
+
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+*.egg-info/
+dist/
+build/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.npm
+.eslintcache
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.env
+
+# Logs
+*.log
+logs/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Documentation
+*.md
+!README.md
+docs/
+
+# Docker
+docker-compose*.yml
+.dockerignore
+
+# Scripts (keep deployment scripts, ignore others)
+scripts/
+!scripts/deploy-gcp.sh
+!scripts/setup-gcp.sh
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Build artifacts (will be built in Cloud Build)
+frontend/dist/
+backend/__pycache__/
+
+# Service account keys (use Secret Manager instead)
+*-service-account.json
+gcp-service-account.json
+!gcp-service-account.json.example
+
+# Local data
+backend/data/
+*.db
+*.sqlite
+
+# Jaseci
+backend/jaseci/
+

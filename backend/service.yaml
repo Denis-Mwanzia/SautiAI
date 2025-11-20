@@ -1,0 +1,77 @@
+# Cloud Run service configuration for backend
+# This file can be used with: gcloud run services replace service.yaml
+
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: sauti-ai-backend
+  annotations:
+    run.googleapis.com/ingress: all
+    run.googleapis.com/execution-environment: gen2
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "1"
+        autoscaling.knative.dev/maxScale: "10"
+        run.googleapis.com/cpu-throttling: "false"
+        run.googleapis.com/execution-environment: gen2
+    spec:
+      containerConcurrency: 80
+      timeoutSeconds: 300
+      serviceAccountName: sauti-ai-backend@PROJECT_ID.iam.gserviceaccount.com
+      containers:
+      - image: REGION-docker.pkg.dev/PROJECT_ID/REPO_NAME/sauti-ai-backend:latest
+        ports:
+        - name: http1
+          containerPort: 8000
+        resources:
+          limits:
+            cpu: "2"
+            memory: 2Gi
+        env:
+        - name: ENVIRONMENT
+          value: "production"
+        - name: LOG_LEVEL
+          value: "INFO"
+        - name: VERTEX_AI_LOCATION
+          value: "us-central1"
+        - name: SUPABASE_URL
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: supabase-url
+        - name: SUPABASE_KEY
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: supabase-key
+        - name: SUPABASE_SERVICE_KEY
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: supabase-service-key
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: database-url
+        - name: VERTEX_AI_PROJECT
+          valueFrom:
+            secretKeyRef:
+              key: latest
+              name: vertex-ai-project
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: "/etc/secrets/gcp-service-account"
+        volumeMounts:
+        - name: gcp-service-account
+          mountPath: /etc/secrets
+          readOnly: true
+      volumes:
+      - name: gcp-service-account
+        secret:
+          secretName: gcp-service-account
+          items:
+          - key: latest
+            path: gcp-service-account.json
+

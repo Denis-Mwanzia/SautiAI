@@ -383,9 +383,9 @@ curl -X POST http://localhost:8000/api/v1/sample/sample \
 ### Backend Deployment
 
 **Recommended Platforms:**
+- **Google Cloud Run**: Serverless with auto-scaling, integrated with GCP services - **Recommended**
 - **Railway**: Easy deployment with automatic scaling
 - **Render**: Simple setup with PostgreSQL
-- **Google Cloud Run**: Serverless with auto-scaling (works with Firebase)
 - **AWS Elastic Beanstalk**: Managed deployment
 
 **Environment Variables:**
@@ -395,7 +395,9 @@ Ensure all required environment variables are set in your deployment platform.
 Use Supabase production database or managed PostgreSQL instance.
 
 **Deployment Guides:**
-- See `DEPLOY_FIREBASE_FULL_STACK.md` for complete Firebase/Google Cloud deployment (recommended)
+- See `DEPLOY_GCP.md` for complete Google Cloud Platform deployment (Cloud Run) - **Recommended**
+- See `DEPLOY_FIREBASE_FULL_STACK.md` for Firebase/Google Cloud deployment
+- See `README_GCP.md` for quick start guide
 - See `backend/DEPLOY_BACKEND.md` for other platform-specific instructions
 
 ### Frontend Deployment
