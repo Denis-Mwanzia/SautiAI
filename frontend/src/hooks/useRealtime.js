@@ -11,7 +11,16 @@ export function useRealtime(onUpdate) {
 
   useEffect(() => {
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-    const wsUrl = apiUrl.replace('http', 'ws') + '/api/v1/realtime/stream'
+    // Convert HTTP/HTTPS to WS/WSS properly
+    let wsUrl
+    if (apiUrl.startsWith('https://')) {
+      wsUrl = apiUrl.replace('https://', 'wss://') + '/api/v1/realtime/stream'
+    } else if (apiUrl.startsWith('http://')) {
+      wsUrl = apiUrl.replace('http://', 'ws://') + '/api/v1/realtime/stream'
+    } else {
+      // Fallback for URLs without protocol
+      wsUrl = (apiUrl.startsWith('https') ? 'wss://' : 'ws://') + apiUrl.replace(/^https?:\/\//, '') + '/api/v1/realtime/stream'
+    }
 
     const connect = () => {
       // Don't reconnect if we've exceeded max attempts or intentionally closed
