@@ -4,26 +4,32 @@ uvicorn[standard]==0.27.0
 python-multipart==0.0.6
 pydantic>=2.5.3,<3.0.0
 pydantic-settings==2.1.0
-websockets>=13.0.0,<14.0.0
+email-validator>=2.0.0
+websockets>=11.0,<13.0
 
 # Database
 supabase==2.3.0
+gotrue==2.4.2
+postgrest==0.13.2
+realtime==1.0.6
 asyncpg==0.29.0
 sqlalchemy==2.0.25
 
 # HTTP Client
-httpx>=0.24.0,<0.25.0
+httpx==0.24.1
 aiohttp==3.9.1
 
 # Jaseci (optional - for agentic features)
-jaseci>=1.4.2.6
-jaseci-serv>=1.4.2.6
+# Note: jaseci 1.4.2.6 requires pydantic<2.0.0, which conflicts with FastAPI 0.109.0
+# If you need jaseci, you may need to use an older FastAPI version or a newer jaseci version
+# jaseci>=1.4.2.6
+# jaseci-serv>=1.4.2.6
 
 # Google AI (optional - install separately if ENABLE_AI=true)
 # google-cloud-aiplatform==1.38.1
-# google-cloud-translate==3.15.1
+google-cloud-translate==3.15.1
 # google-genai==0.2.2
-# vertexai>=1.43.0
+vertexai>=1.43.0
 
 # Data Processing
 python-dateutil==2.8.2
