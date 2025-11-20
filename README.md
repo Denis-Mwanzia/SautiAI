@@ -385,7 +385,7 @@ curl -X POST http://localhost:8000/api/v1/sample/sample \
 **Recommended Platforms:**
 - **Railway**: Easy deployment with automatic scaling
 - **Render**: Simple setup with PostgreSQL
-- **Google Cloud Run**: Serverless with auto-scaling
+- **Google Cloud Run**: Serverless with auto-scaling (works with Firebase)
 - **AWS Elastic Beanstalk**: Managed deployment
 
 **Environment Variables:**
@@ -394,13 +394,23 @@ Ensure all required environment variables are set in your deployment platform.
 **Database:**
 Use Supabase production database or managed PostgreSQL instance.
 
+**Deployment Guides:**
+- See `DEPLOY_FIREBASE_FULL_STACK.md` for complete Firebase/Google Cloud deployment (recommended)
+- See `backend/DEPLOY_BACKEND.md` for other platform-specific instructions
+
 ### Frontend Deployment
 
 **Recommended Platforms:**
+- **Firebase Hosting**: Fast CDN, works with Cloud Run backend (recommended)
 - **Vercel**: Optimized for React/Vite
-- **Netlify**: Easy deployment with CI/CD
 - **GitHub Pages**: Free static hosting
 - **AWS S3 + CloudFront**: Scalable CDN hosting
+
+**Firebase + Cloud Run (Recommended):**
+- Deploy backend to Cloud Run (serverless, auto-scaling)
+- Deploy frontend to Firebase Hosting (fast CDN)
+- Both in Google Cloud ecosystem, easy integration
+- See `DEPLOY_FIREBASE_FULL_STACK.md` for complete guide
 
 **Build Command:**
 ```bash

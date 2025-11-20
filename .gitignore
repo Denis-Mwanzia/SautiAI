@@ -41,6 +41,8 @@ Thumbs.db
 # Logs
 *.log
 logs/
+backend.log
+ingestion.log
 
 # Database
 *.db
@@ -58,3 +60,10 @@ gcp-service-account.json
 # Netlify
 .netlify/
 .netlify.toml.local
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+*.cache

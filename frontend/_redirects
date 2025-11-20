@@ -1,6 +1,0 @@
-# Netlify redirects file (fallback for SPA routing)
-# This file is placed in the dist folder during build
-
-# SPA fallback - all routes go to index.html
-/*    /index.html   200
-
