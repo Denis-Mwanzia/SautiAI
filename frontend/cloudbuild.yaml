@@ -1,0 +1,26 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--build-arg'
+      - 'VITE_API_URL=${_VITE_API_URL}'
+      - '--build-arg'
+      - 'VITE_SUPABASE_URL=${_VITE_SUPABASE_URL}'
+      - '--build-arg'
+      - 'VITE_SUPABASE_ANON_KEY=${_VITE_SUPABASE_ANON_KEY}'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/sauti-ai-frontend:latest'
+      - '-f'
+      - 'Dockerfile.prod'
+      - '.'
+
+images:
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/sauti-ai-frontend:latest'
+
+substitutions:
+  _REGION: 'us-central1'
+  _REPO_NAME: 'sauti-ai'
+  _VITE_API_URL: ''
+  _VITE_SUPABASE_URL: ''
+  _VITE_SUPABASE_ANON_KEY: ''
+

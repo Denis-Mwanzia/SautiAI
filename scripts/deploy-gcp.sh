@@ -167,7 +167,7 @@ gcloud run deploy sauti-ai-backend \
     --platform managed \
     --allow-unauthenticated \
     --service-account "$SERVICE_ACCOUNT" \
-    --set-secrets="SUPABASE_URL=supabase-url:latest,SUPABASE_KEY=supabase-key:latest,SUPABASE_SERVICE_KEY=supabase-service-key:latest,DATABASE_URL=database-url:latest,VERTEX_AI_PROJECT=vertex-ai-project:latest,GOOGLE_APPLICATION_CREDENTIALS=gcp-service-account:latest" \
+    --set-secrets="SUPABASE_URL=supabase-url:latest,SUPABASE_KEY=supabase-key:latest,SUPABASE_SERVICE_KEY=supabase-service-key:latest,DATABASE_URL=database-url:latest,VERTEX_AI_PROJECT=vertex-ai-project:latest" \
     --set-env-vars="ENVIRONMENT=production,LOG_LEVEL=INFO,VERTEX_AI_LOCATION=${REGION}" \
     --memory 2Gi \
     --cpu 2 \
