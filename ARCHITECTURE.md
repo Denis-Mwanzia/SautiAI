@@ -614,17 +614,44 @@ Client State Update
 
 ## 🚀 Deployment Architecture
 
-### Recommended Deployment
+### Current Production Deployment
+
+**Platform**: Google Cloud Platform (Cloud Run)
 
 **Backend:**
-- **Platform**: Railway, Render, Google Cloud Run, AWS Elastic Beanstalk
+- **Service**: Google Cloud Run (serverless containers)
+- **URL**: https://sauti-ai-backend-7ufmxmr57q-uc.a.run.app
+- **Resources**: 2Gi memory, 2 CPU, 1-10 instances
 - **Database**: Supabase (managed PostgreSQL)
-- **Environment**: Production environment variables
+- **Secrets**: Google Secret Manager
+- **AI Services**: Vertex AI (Gemini models)
+- **Region**: us-central1
 
 **Frontend:**
-- **Platform**: Vercel, Netlify, GitHub Pages, AWS S3 + CloudFront
-- **Build**: `npm run build` → `dist/` directory
-- **CDN**: Static asset delivery
+- **Service**: Google Cloud Run (Nginx serving static files)
+- **URL**: https://sauti-ai-frontend-896121198699.us-central1.run.app
+- **Resources**: 512Mi memory, 1 CPU, 0-10 instances
+- **Build**: Docker build with Vite
+- **CDN**: Cloud Run edge caching
+
+**Infrastructure:**
+- **Artifact Registry**: Docker image storage
+- **Cloud Build**: CI/CD for automated builds
+- **Secret Manager**: Secure environment variable storage
+- **CORS**: Configured for frontend origin
+
+### Alternative Deployment Options
+
+**Backend:**
+- **Railway**: Easy deployment with automatic scaling
+- **Render**: Simple setup with PostgreSQL
+- **AWS Elastic Beanstalk**: Managed deployment
+
+**Frontend:**
+- **Vercel**: Optimized for React/Vite
+- **Netlify**: Fast CDN with continuous deployment
+- **GitHub Pages**: Free static hosting
+- **AWS S3 + CloudFront**: Scalable CDN hosting
 
 ### Docker Deployment
 
@@ -717,6 +744,7 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 ---
 
-**Last Updated**: 2025-01-15  
+**Last Updated**: 2025-11-20  
 **Version**: 1.0.0  
+**Deployment**: Google Cloud Run (Production)  
 **Maintained by**: Sauti AI Team
