@@ -68,10 +68,15 @@ export default function Chat() {
       console.error('Chat error:', error)
       let errorMsg = "I'm sorry, I encountered an error processing your request. Please try again."
       if (error.response?.status === 404) {
-        errorMsg = "Chat features are currently disabled. Please enable AI features in the backend configuration."
+        errorMsg = "Chat features are currently disabled. Please enable AI features (ENABLE_AI=true) in the backend configuration."
+      } else if (error.response?.status === 503 || error.code === 'ERR_NETWORK') {
+        errorMsg = "Unable to connect to the chat service. Please check your connection and try again."
       } else {
-        errorMsg = error.response?.data?.detail || errorMsg
-        toast.error(errorMsg)
+        errorMsg = error.response?.data?.detail || error.message || errorMsg
+        // Only show toast for non-404 errors
+        if (error.response?.status !== 404) {
+          toast.error(errorMsg)
+        }
       }
       const errorMessage = {
         role: 'assistant',

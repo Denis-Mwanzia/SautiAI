@@ -31,8 +31,8 @@ export default function Alerts() {
         return
       }
       
-      const response = await dedupeRequest('alerts-list-50', () => api.get('/alerts?limit=50'))
-      const alertsData = response.data.data || []
+      const response = await dedupeRequest('alerts-list-50', () => api.get('/alerts', { params: { limit: 50 } }))
+      const alertsData = response.data?.data || []
       
       setAlerts(alertsData)
       setCached(cacheKey, alertsData)
@@ -41,9 +41,22 @@ export default function Alerts() {
         toast.success('Alerts refreshed')
       }
     } catch (error) {
-      const errorMsg = error.response?.data?.detail || 'Failed to load alerts'
-      toast.error(errorMsg)
-      console.error('Error loading alerts:', error)
+      // Don't show error toast if it's just an empty result
+      if (error.response?.status === 404 || error.response?.status === 200) {
+        setAlerts([])
+        setCached(cacheKey, [])
+        if (showToast) {
+          toast.success('Alerts refreshed')
+        }
+      } else {
+        const errorMsg = error.response?.data?.detail || 'Failed to load alerts'
+        // Only show error toast if not in initial load
+        if (showToast) {
+          toast.error(errorMsg)
+        }
+        console.error('Error loading alerts:', error)
+        setAlerts([]) // Set empty array on error to prevent UI issues
+      }
     } finally {
       setLoading(false)
       setRefreshing(false)
@@ -60,11 +73,13 @@ export default function Alerts() {
       }
       
       const res = await dedupeRequest('alerts-rules', () => api.get('/rules'))
-      const rulesData = res.data.data || []
+      const rulesData = res.data?.data || []
       setRules(rulesData)
       setCached(cacheKey, rulesData)
     } catch (e) {
       console.error('Failed to load rules', e)
+      // Set empty array on error to prevent UI issues
+      setRules([])
     }
   }, [getCached, setCached, dedupeRequest])
 

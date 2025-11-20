@@ -63,12 +63,12 @@ export default function Dashboard() {
       }
       
       const [insightsRes, trendsRes] = await Promise.all([
-        dedupeRequest('dashboard-insights-7', () => api.get('/dashboard/insights?days=7')),
-        dedupeRequest('dashboard-trends-30', () => api.get('/dashboard/sentiment-trends?days=30')),
+        dedupeRequest('dashboard-insights-7', () => api.get('/dashboard/insights', { params: { days: 7 } })),
+        dedupeRequest('dashboard-trends-30', () => api.get('/dashboard/sentiment-trends', { params: { days: 30 } })),
       ])
 
-      insightsData = insightsRes.data.data
-      trendsData = trendsRes.data.data
+      insightsData = insightsRes.data?.data || null
+      trendsData = trendsRes.data?.data || null
       
       setCached(insightsCacheKey, insightsData)
       setCached(trendsCacheKey, trendsData)
@@ -81,8 +81,14 @@ export default function Dashboard() {
       }
     } catch (error) {
       const errorMsg = error.response?.data?.detail || 'Failed to load dashboard data'
-      toast.error(errorMsg)
+      // Only show toast if explicitly requested
+      if (showToast) {
+        toast.error(errorMsg)
+      }
       console.error('Error loading dashboard data:', error)
+      // Set null data on error to show appropriate UI
+      setInsights(null)
+      setSentimentTrends(null)
     } finally {
       setLoading(false)
       setRefreshing(false)

@@ -64,19 +64,26 @@ export default function CrisisDashboard() {
         return
       }
       
-      const response = await dedupeRequest('crisis-dashboard-7', () => api.get('/crisis/dashboard?days=7'))
-      const data = response.data.data
+      const response = await dedupeRequest('crisis-dashboard-7', () => api.get('/crisis/dashboard', { params: { days: 7 } }))
+      const data = response.data?.data || null
       
       setDashboardData(data)
-      setCached(cacheKey, data)
+      if (data) {
+        setCached(cacheKey, data)
+      }
       
       if (showToast) {
         toast.success('Crisis dashboard refreshed')
       }
     } catch (error) {
       const errorMsg = error.response?.data?.detail || 'Failed to load crisis dashboard'
-      toast.error(errorMsg)
+      // Only show toast if explicitly requested or if it's not a network error
+      if (showToast || (error.response?.status && error.response.status >= 500)) {
+        toast.error(errorMsg)
+      }
       console.error('Error loading crisis dashboard:', error)
+      // Set null data on error to show appropriate UI
+      setDashboardData(null)
     } finally {
       setLoading(false)
       setRefreshing(false)
