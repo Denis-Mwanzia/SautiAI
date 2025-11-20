@@ -251,7 +251,10 @@ ALERT_WEBHOOK_URL=https://example.com/webhook
 # Application Settings
 LOG_LEVEL=INFO
 CORS_ORIGINS=http://localhost:5173,http://localhost:3000
-ENABLE_AI=true  # Set to false to disable AI features
+ENABLE_AI=true  # Set to true to enable AI features (chat, AI analysis, reports)
+PRODUCTION_ORIGINS=https://your-frontend-url.com  # Production frontend URL for CORS
+FRONTEND_ORIGINS=https://your-frontend-url.com  # Frontend origin for CSP
+PUBLIC_BACKEND_ORIGIN=https://your-backend-url.com  # Public backend URL
 
 # Monitoring (Optional)
 SENTRY_DSN=your-sentry-dsn
@@ -380,47 +383,45 @@ curl -X POST http://localhost:8000/api/v1/sample/sample \
 
 ## 🚢 Deployment
 
-### Backend Deployment
+### Production Deployment
 
-**Recommended Platforms:**
-- **Google Cloud Run**: Serverless with auto-scaling, integrated with GCP services - **Recommended**
+The application is currently deployed on **Google Cloud Platform** using **Cloud Run**:
+
+- **Backend**: https://sauti-ai-backend-7ufmxmr57q-uc.a.run.app
+- **Frontend**: https://sauti-ai-frontend-896121198699.us-central1.run.app
+- **API Documentation**: https://sauti-ai-backend-7ufmxmr57q-uc.a.run.app/docs
+
+### Deployment Options
+
+**Recommended: Google Cloud Run**
+- Serverless with auto-scaling
+- Integrated with GCP services (Vertex AI, Secret Manager)
+- Pay-per-use pricing
+- Easy deployment with Docker
+
+**Other Options:**
 - **Railway**: Easy deployment with automatic scaling
 - **Render**: Simple setup with PostgreSQL
 - **AWS Elastic Beanstalk**: Managed deployment
+- **Vercel/Netlify**: For frontend static hosting
 
-**Environment Variables:**
-Ensure all required environment variables are set in your deployment platform.
+### Deployment Requirements
 
-**Database:**
-Use Supabase production database or managed PostgreSQL instance.
+**Backend:**
+- Python 3.11+
+- All environment variables configured (see Configuration section)
+- Supabase production database
+- Google Cloud service account (for Vertex AI)
 
-**Deployment Guides:**
-- See `DEPLOY_GCP.md` for complete Google Cloud Platform deployment (Cloud Run) - **Recommended**
-- See `DEPLOY_FIREBASE_FULL_STACK.md` for Firebase/Google Cloud deployment
-- See `README_GCP.md` for quick start guide
-- See `backend/DEPLOY_BACKEND.md` for other platform-specific instructions
+**Frontend:**
+- Node.js 18+
+- Environment variables for API URL and Supabase
+- Build output: `frontend/dist`
 
-### Frontend Deployment
-
-**Recommended Platforms:**
-- **Firebase Hosting**: Fast CDN, works with Cloud Run backend (recommended)
-- **Vercel**: Optimized for React/Vite
-- **GitHub Pages**: Free static hosting
-- **AWS S3 + CloudFront**: Scalable CDN hosting
-
-**Firebase + Cloud Run (Recommended):**
-- Deploy backend to Cloud Run (serverless, auto-scaling)
-- Deploy frontend to Firebase Hosting (fast CDN)
-- Both in Google Cloud ecosystem, easy integration
-- See `DEPLOY_FIREBASE_FULL_STACK.md` for complete guide
-
-**Build Command:**
-```bash
-npm run build
-```
-
-**Output Directory:**
-`frontend/dist`
+**Deployment Scripts:**
+- `scripts/deploy-gcp.sh` - Automated GCP deployment script
+- `scripts/setup-gcp.sh` - Initial GCP project setup
+- `scripts/update-secrets.sh` - Secret management
 
 ### Docker Deployment
 
@@ -438,7 +439,8 @@ docker build -t sauti-ai-frontend ./frontend
 Complete API documentation is available in **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)**.
 
 **Interactive Documentation:**
-- **Swagger UI**: http://localhost:8000/docs
+- **Swagger UI (Local)**: http://localhost:8000/docs
+- **Swagger UI (Production)**: https://sauti-ai-backend-7ufmxmr57q-uc.a.run.app/docs
 - **ReDoc**: http://localhost:8000/redoc
 - **OpenAPI JSON**: http://localhost:8000/openapi.json
 
